@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Tracker</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+      <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">
+        Health Tracker
+      </h2>
+      <form id="healthForm" class="space-y-4">
+        <div>
+          <label class="block text-gray-600">Email:</label>
+          <input
+            type="email"
+            name="email"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-600">Full Name:</label>
+          <input
+            type="text"
+            name="full_name"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-600">Height (cm):</label>
+          <input
+            type="number"
+            name="height"
+            step="0.01"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-600">Weight (kg):</label>
+          <input
+            type="number"
+            name="weight"
+            step="0.01"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-600">Birth Date:</label>
+          <input
+            type="date"
+            name="birth_date"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <div
+      id="resultModal"
+      class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+        <span
+          class="close text-gray-500 text-2xl font-bold cursor-pointer float-right"
+          >&times;</span
+        >
+        <div class="result-title text-2xl font-bold mb-4 text-gray-800">
+          Result
+        </div>
+        <div
+          class="result-message text-lg mb-4 text-gray-600"
+          id="resultMessage"
+        ></div>
+        <div
+          class="result-category text-xl font-bold text-red-500"
+          id="resultCategory"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("healthForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = new FormData(this);
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/submit", true);
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              const result = JSON.parse(xhr.responseText);
+              document.getElementById("resultMessage").innerText =
+                result.message;
+              document.getElementById("resultCategory").innerText +=
+                result.health_category;
+              document.getElementById("resultModal").classList.remove("hidden");
+            }
+          };
+          xhr.send(formData);
+        });
+
+      document.querySelector(".close").onclick = function () {
+        document.getElementById("resultModal").classList.add("hidden");
+      };
+
+      window.onclick = function (event) {
+        if (event.target == document.getElementById("resultModal")) {
+          document.getElementById("resultModal").classList.add("hidden");
+        }
+      };
+    </script>
+  </body>
+</html>
